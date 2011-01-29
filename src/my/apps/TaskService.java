@@ -16,6 +16,8 @@ public class TaskService {
 
     private HttpService httpService;
     private AuthTokenProvider authTokenProvider;
+    private long clientVersion;
+    private int actionId;
 
     public TaskService(HttpService httpService, AuthTokenProvider authTokenProvider) {
         this.httpService = httpService;
@@ -23,36 +25,70 @@ public class TaskService {
     }
 
     public String addList(String listName) throws IOException {
+        try {
+            int insertIndex = getLists().length();
+            JSONObject action = createListInsertAction(listName, insertIndex);
+            JSONObject request = createRequest(action);
+            JSONObject response = executeRequest(request);
+            return getNewId(response);
+        } catch (JSONException ex) {
+            throw new IOException("Unrecognized response", ex);
+        }
+    }
+
+    private JSONArray getLists() throws IOException {
+        JSONArray lists;
         String initialResponse = httpService.get(HttpParameters.with(SERVICE_URL)
               .cookie("GTL", authTokenProvider.getToken()));
         Matcher m = INITIAL_STATE_PATTERN.matcher(initialResponse);
         if(m.find()) {
             try {
                 JSONObject initialState = new JSONObject(m.group(1));
-                JSONArray lists = initialState.getJSONObject("t").getJSONArray("lists");
-
-                JSONObject entityDelta = new JSONObject();
-                entityDelta.put("name", listName);
-                entityDelta.put("entity_type", "GROUP");
-
-                JSONObject action = new JSONObject();
-                action.put("action_type", "create");
-                action.put("action_id", Integer.toString(1));
-                action.put("index", lists.length());
-                action.put("entity_delta", entityDelta);
-
-                JSONObject request = new JSONObject();
-                request.put("action_list", new JSONArray(Arrays.asList(action)));
-                request.put("client_version", initialState.getLong("v"));
-                JSONObject response = new JSONObject(httpService.post(HttpParameters.with(REQUEST_URL)
-                        .formParameter("r", request.toString())
-                        .header("AT", "1")
-                        .cookie("GTL", authTokenProvider.getToken())));
-                return response.getJSONArray("results").getJSONObject(0).getString("new_id");
+                clientVersion = initialState.getLong("v");
+                actionId = 1;
+                lists = initialState.getJSONObject("t").getJSONArray("lists");
             } catch (JSONException ex) {
                 throw new IOException("Unrecognized response", ex);
             }
         }
-        throw new IOException("Unrecognized response", new IllegalArgumentException(initialResponse));
+        else {
+            throw new IOException("Unrecognized response", new IllegalArgumentException(initialResponse));
+        }
+        return lists;
+    }
+
+    private JSONObject createListInsertAction(String listName, int insertIndex) throws JSONException {
+        JSONObject action = new JSONObject();
+        action.put("action_type", "create");
+        action.put("action_id", Integer.toString(actionId));
+        action.put("index", insertIndex);
+        action.put("entity_delta", createListDelta(listName));
+        return action;
+    }
+
+    private JSONObject createListDelta(String listName) throws JSONException {
+        JSONObject entityDelta = new JSONObject();
+        entityDelta.put("name", listName);
+        entityDelta.put("entity_type", "GROUP");
+        return entityDelta;
+    }
+
+    private JSONObject executeRequest(JSONObject request) throws JSONException {
+        return new JSONObject(httpService.post(HttpParameters.with(REQUEST_URL)
+                        .formParameter("r", request.toString())
+                        .header("AT", "1")
+                        .cookie("GTL", authTokenProvider.getToken())));
+    }
+
+    private JSONObject createRequest(JSONObject action) throws JSONException {
+        JSONObject request = new JSONObject();
+        request.put("action_list", new JSONArray(Arrays.asList(action)));
+        request.put("client_version", clientVersion);
+        return request;
+    }
+
+    private String getNewId(JSONObject response) throws JSONException {
+        JSONObject results = response.getJSONArray("results").getJSONObject(0);
+        return results.getString("new_id");
     }
 }
