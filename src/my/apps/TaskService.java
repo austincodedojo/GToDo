@@ -27,7 +27,7 @@ public class TaskService {
     public String addList(String listName) throws IOException {
         try {
             int insertIndex = getLists().length();
-            JSONObject action = createListInsertAction(listName, insertIndex);
+            JSONObject action = createAddListAction(listName, insertIndex);
             JSONObject request = createRequest(action);
             JSONObject response = executeRequest(request);
             return getNewId(response);
@@ -57,7 +57,7 @@ public class TaskService {
         return lists;
     }
 
-    private JSONObject createListInsertAction(String listName, int insertIndex) throws JSONException {
+    private JSONObject createAddListAction(String listName, int insertIndex) throws JSONException {
         JSONObject action = new JSONObject();
         action.put("action_type", "create");
         action.put("action_id", Integer.toString(actionId));
