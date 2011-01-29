@@ -73,7 +73,7 @@ public class TaskService {
         return entityDelta;
     }
 
-    private JSONObject executeRequest(JSONObject request) throws JSONException {
+    private JSONObject executeRequest(JSONObject request) throws JSONException, IOException {
         return new JSONObject(httpService.post(HttpParameters.with(REQUEST_URL)
                         .formParameter("r", request.toString())
                         .header("AT", "1")

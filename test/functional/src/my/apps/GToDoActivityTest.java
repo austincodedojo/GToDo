@@ -2,6 +2,8 @@ package my.apps;
 
 import android.test.ActivityInstrumentationTestCase2;
 
+import java.io.IOException;
+
 public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoActivity> {
     private DatabaseDriver database;
     private ServiceDriver todo;
@@ -27,7 +29,7 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
         list2 = "List " + (first + 1);
     }
 
-    public void testShowsLists() {
+    public void testShowsLists() throws IOException {
         database.startWithCleanSlate();
         todo.addList(list1);
         todo.addList(list2);
