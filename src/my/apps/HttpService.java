@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -73,9 +74,16 @@ public class HttpService {
             httpMessage.addHeader(header.getKey(), header.getValue());
         }
 
-        cookieStore.clear();
         for(Map.Entry<String, String> cookie : parameters.cookies.entrySet()) {
-            cookieStore.addCookie(new BasicClientCookie(cookie.getKey(), cookie.getValue()));
+            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getKey(), cookie.getValue());
+            clientCookie.setDomain("mail.google.com");
+            clientCookie.setPath("/tasks");
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, 3);
+            clientCookie.setExpiryDate(cal.getTime());
+            clientCookie.setSecure(true);
+            cookieStore.addCookie(clientCookie);
         }
     }
 }
