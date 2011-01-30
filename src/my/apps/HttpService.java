@@ -84,6 +84,7 @@ public class HttpService {
         clientCookie.setPath("/tasks");
         clientCookie.setExpiryDate(getExpiryDate());
         clientCookie.setSecure(true);
+        return clientCookie;
     }
 
     private Date getExpiryDate() {

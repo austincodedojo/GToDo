@@ -13,5 +13,6 @@ public class DatabaseDriver {
     public void startWithCleanSlate() {
         SQLiteDatabase db = localRepository.getWritableDatabase();
         localRepository.onUpgrade(db, -1, -1);
+        db.close();
     }
 }
