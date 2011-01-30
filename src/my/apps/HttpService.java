@@ -7,6 +7,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.ClientCookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
@@ -73,17 +74,16 @@ public class HttpService {
         }
 
         for(Map.Entry<String, String> cookie : parameters.cookies.entrySet()) {
-            createClientCookie(cookie.getKey(), cookie.getValue());
+            cookieStore.addCookie(createClientCookie(cookie.getKey(), cookie.getValue()));
         }
     }
 
-    private void createClientCookie(String name, String value) {
+    private ClientCookie createClientCookie(String name, String value) {
         BasicClientCookie clientCookie = new BasicClientCookie(name, value);
         clientCookie.setDomain("mail.google.com");
         clientCookie.setPath("/tasks");
         clientCookie.setExpiryDate(getExpiryDate());
         clientCookie.setSecure(true);
-        cookieStore.addCookie(clientCookie);
     }
 
     private Date getExpiryDate() {
