@@ -11,6 +11,8 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
 
     private String list1;
     private String list2;
+    private String list3;
+    private String list4;
 
     public GToDoActivityTest() {
         super("my.apps", GToDoActivity.class);
@@ -27,13 +29,17 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
         long first = System.currentTimeMillis();
         list1 = "List " + first;
         list2 = "List " + (first + 1);
+        list3 = "List " + (first + 2);
+        list4 = "List " + (first + 3);
     }
 
     public void testShowsLists() throws IOException, InterruptedException {
         database.startWithCleanSlate();
-        todo.addList(list1);
-        todo.addList(list2);
-        ui.firstShowsNoLists();
-        ui.thenShowsLists(list1, list2);
+        database.addList(list1);
+        database.addList(list2);
+        todo.addList(list3);
+        todo.addList(list4);
+        ui.showsLists(list1, list2);
+        ui.showsLists(list1, list2, list3, list4);
     }
 }

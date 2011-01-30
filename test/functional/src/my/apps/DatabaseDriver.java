@@ -15,4 +15,8 @@ public class DatabaseDriver {
         localRepository.onUpgrade(db, -1, -1);
         db.close();
     }
+
+    public void addList(String listName) {
+        localRepository.insertLists(new String[] { Lists.NAME }, new String[] { listName });
+    }
 }

@@ -39,14 +39,7 @@ public class UIDriver {
         });
     }
 
-    public void firstShowsNoLists() throws InterruptedException {
-        List<String> actualLists = observedListNames.poll(2, TimeUnit.SECONDS);
-
-        assertNotNull(actualLists);
-        assertEquals(Collections.<String> emptyList(), actualLists);
-    }
-
-    public void thenShowsLists(String... expectedLists) throws InterruptedException {
+    public void showsLists(String... expectedLists) throws InterruptedException {
         List<String> actualLists = observedListNames.poll(2, TimeUnit.SECONDS);
         assertTrue(actualLists.containsAll(Arrays.asList(expectedLists)));
     }
