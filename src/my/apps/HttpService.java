@@ -17,10 +17,7 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HttpService {
     private DefaultHttpClient httpClient;
@@ -58,10 +55,11 @@ public class HttpService {
     }
 
     private String responseToString(HttpResponse httpResponse) throws IOException {
-        StringBuffer response = new StringBuffer();
-        byte[] contentBuffer = new byte[1024];
         InputStream content = httpResponse.getEntity().getContent();
+        StringBuffer response = new StringBuffer();
+
         int l;
+        byte[] contentBuffer = new byte[1024];
         while((l = content.read(contentBuffer)) != -1) {
             response.append(new String(contentBuffer, 0, l, "US-ASCII"));
         }
@@ -75,15 +73,22 @@ public class HttpService {
         }
 
         for(Map.Entry<String, String> cookie : parameters.cookies.entrySet()) {
-            BasicClientCookie clientCookie = new BasicClientCookie(cookie.getKey(), cookie.getValue());
-            clientCookie.setDomain("mail.google.com");
-            clientCookie.setPath("/tasks");
-
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, 3);
-            clientCookie.setExpiryDate(cal.getTime());
-            clientCookie.setSecure(true);
-            cookieStore.addCookie(clientCookie);
+            createClientCookie(cookie.getKey(), cookie.getValue());
         }
+    }
+
+    private void createClientCookie(String name, String value) {
+        BasicClientCookie clientCookie = new BasicClientCookie(name, value);
+        clientCookie.setDomain("mail.google.com");
+        clientCookie.setPath("/tasks");
+        clientCookie.setExpiryDate(getExpiryDate());
+        clientCookie.setSecure(true);
+        cookieStore.addCookie(clientCookie);
+    }
+
+    private Date getExpiryDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 3);
+        return cal.getTime();
     }
 }
