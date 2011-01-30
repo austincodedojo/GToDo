@@ -22,14 +22,14 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
 
         database = new DatabaseDriver(getActivity());
         todo = new ServiceDriver(getActivity());
-        ui = new UIDriver();
+        ui = new UIDriver(getActivity());
 
         long first = System.currentTimeMillis();
         list1 = "List " + first;
         list2 = "List " + (first + 1);
     }
 
-    public void testShowsLists() throws IOException {
+    public void testShowsLists() throws IOException, InterruptedException {
         database.startWithCleanSlate();
         todo.addList(list1);
         todo.addList(list2);
