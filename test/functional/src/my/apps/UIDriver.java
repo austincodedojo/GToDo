@@ -17,12 +17,10 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class UIDriver {
-    private Activity activity;
     private LinkedBlockingQueue<List<String>> observedListNames;
     private ListView taskLists;
 
     public UIDriver(Activity activity) {
-        this.activity = activity;
         taskLists = (ListView) activity.findViewById(R.id.task_lists);
 
         observedListNames = new LinkedBlockingQueue<List<String>>();
@@ -45,7 +43,7 @@ public class UIDriver {
         List<String> actualLists = observedListNames.poll(2, TimeUnit.SECONDS);
 
         assertNotNull(actualLists);
-        assertEquals(Collections.emptyList(), actualLists);
+        assertEquals(Collections.<String> emptyList(), actualLists);
     }
 
     public void thenShowsLists(String... expectedLists) throws InterruptedException {
