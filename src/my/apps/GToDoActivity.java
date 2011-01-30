@@ -4,15 +4,26 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 public class GToDoActivity extends Activity {
+    private ListView taskLists;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        taskLists = (ListView) findViewById(R.id.task_lists);
+        taskLists.setAdapter(new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
+                null, new String[] { Lists.NAME }, new int[] { android.R.id.text1 }));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         new AuthTokenTask().execute();
     }
