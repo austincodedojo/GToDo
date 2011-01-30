@@ -82,12 +82,12 @@ public class HttpService {
         BasicClientCookie clientCookie = new BasicClientCookie(name, value);
         clientCookie.setDomain("mail.google.com");
         clientCookie.setPath("/tasks");
-        clientCookie.setExpiryDate(getExpiryDate());
+        clientCookie.setExpiryDate(threeMonthsInTheFuture());
         clientCookie.setSecure(true);
         return clientCookie;
     }
 
-    private Date getExpiryDate() {
+    private Date threeMonthsInTheFuture() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 3);
         return cal.getTime();
