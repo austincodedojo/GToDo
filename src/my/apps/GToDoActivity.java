@@ -8,6 +8,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import javax.sound.midi.ControllerEventListener;
+
 public class GToDoActivity extends Activity {
     private ListView taskLists;
 
@@ -25,10 +27,14 @@ public class GToDoActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        new AuthTokenTask().execute();
+        new TaskListsTask().execute();
     }
 
-    public class AuthTokenTask extends AsyncTask<Void, Void, String> {
+    private Controller getController() {
+        return ((GToDoApplication) getApplication()).getController();
+    }
+
+    public class TaskListsTask extends AsyncTask<Void, Void, String> {
         private Intent userInteration;
         private Exception fatalException;
 
@@ -51,7 +57,7 @@ public class GToDoActivity extends Activity {
         protected void onPostExecute(String token) {
             if(userInteration != null) {
                 GToDoActivity.this.startActivityForResult(userInteration, 0);
-                new AuthTokenTask().execute();
+                new TaskListsTask().execute();
             }
             else if(fatalException != null) {
                 Toast.makeText(GToDoActivity.this, fatalException.getMessage(), Toast.LENGTH_SHORT).show();
