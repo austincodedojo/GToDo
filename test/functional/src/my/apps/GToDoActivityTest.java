@@ -21,7 +21,7 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
         super.setUp();
 
         database = new DatabaseDriver(getActivity());
-        todo = new ServiceDriver();
+        todo = new ServiceDriver(getActivity());
         ui = new UIDriver();
 
         long first = System.currentTimeMillis();

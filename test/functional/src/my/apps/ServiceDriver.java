@@ -1,12 +1,14 @@
 package my.apps;
 
+import android.content.Context;
+
 import java.io.IOException;
 
 public class ServiceDriver {
     private TaskService taskService;
 
-    public ServiceDriver() {
-        this.taskService = new TaskService(new HttpService(), new AuthTokenProvider());
+    public ServiceDriver(Context context) {
+        this.taskService = new TaskService(new HttpService(), new AuthTokenProvider(context));
     }
 
     public void addList(String listName) throws IOException {
