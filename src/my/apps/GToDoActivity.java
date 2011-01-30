@@ -10,8 +10,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import javax.sound.midi.ControllerEventListener;
-
 public class GToDoActivity extends Activity {
     private ListView taskLists;
     private SimpleCursorAdapter taskListsAdapter;
@@ -44,7 +42,7 @@ public class GToDoActivity extends Activity {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            ImmediateAndDeferredCursor results = getController().getTaskLists();
+            CursorResults results = getController().getTaskLists();
             publishProgress(results.getImmediate());
             return results.getDeferred();
         }
