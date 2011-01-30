@@ -1,5 +1,7 @@
 package my.apps;
 
+import android.database.Cursor;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,6 +14,7 @@ import javax.sound.midi.ControllerEventListener;
 
 public class GToDoActivity extends Activity {
     private ListView taskLists;
+    private SimpleCursorAdapter taskListsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -19,8 +22,9 @@ public class GToDoActivity extends Activity {
         setContentView(R.layout.main);
 
         taskLists = (ListView) findViewById(R.id.task_lists);
-        taskLists.setAdapter(new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
-                null, new String[] { Lists.NAME }, new int[] { android.R.id.text1 }));
+        taskListsAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1,
+                null, new String[] { Lists.NAME }, new int[] { android.R.id.text1 });
+        taskLists.setAdapter(taskListsAdapter);
     }
 
     @Override
@@ -34,27 +38,24 @@ public class GToDoActivity extends Activity {
         return ((GToDoApplication) getApplication()).getController();
     }
 
-    public class TaskListsTask extends AsyncTask<Void, Void, String> {
+    public class TaskListsTask extends AsyncTask<Void, Cursor, Cursor> {
         private Intent userInteration;
         private Exception fatalException;
 
         @Override
-        protected String doInBackground(Void... voids) {
-            AuthTokenProvider authTokenProvider = new AuthTokenProvider(GToDoActivity.this);
-            try {
-                return authTokenProvider.getToken();
-            }
-            catch (UserInteractionRequiredException ex) {
-                userInteration = ex.getUserInteraction();
-            }
-            catch (Exception ex) {
-                fatalException = ex;
-            }
-            return null;
+        protected Cursor doInBackground(Void... voids) {
+            ImmediateAndDeferredCursor results = getController().getTaskLists();
+            publishProgress(results.getImmediate());
+            return results.getDeferred();
         }
 
         @Override
-        protected void onPostExecute(String token) {
+        protected void onProgressUpdate(Cursor... values) {
+            taskListsAdapter.changeCursor(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
             if(userInteration != null) {
                 GToDoActivity.this.startActivityForResult(userInteration, 0);
                 new TaskListsTask().execute();
@@ -63,9 +64,7 @@ public class GToDoActivity extends Activity {
                 Toast.makeText(GToDoActivity.this, fatalException.getMessage(), Toast.LENGTH_SHORT).show();
                 GToDoActivity.this.finish();
             }
-            else {
-                Toast.makeText(GToDoActivity.this, token, Toast.LENGTH_SHORT).show();
-            }
+            taskListsAdapter.changeCursor(cursor);
         }
     }
 }
