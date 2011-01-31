@@ -2,8 +2,10 @@ package my.apps;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 public class LocalRepository extends SQLiteOpenHelper {
     private static int VERSION = 1;
@@ -39,5 +41,12 @@ public class LocalRepository extends SQLiteOpenHelper {
             }
             db.insert(TABLE_LISTS, null, cvs);
         }
+    }
+
+    public Cursor getLists(String[] projection, String sortOrder) {
+        SQLiteDatabase db = getReadableDatabase();
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(TABLE_LISTS);
+        return qb.query(db, projection, null, new String[0], null, null, sortOrder);
     }
 }

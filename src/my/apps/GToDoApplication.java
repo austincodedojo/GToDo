@@ -4,9 +4,16 @@ import android.app.Application;
 
 public class GToDoApplication extends Application {
     private Controller controller;
+    private LocalRepository localRepository;
+    private Synchronizer synchronizer;
 
-    public GToDoApplication() {
-        this.controller = new Controller();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        localRepository = new LocalRepository(getApplicationContext());
+        synchronizer = new Synchronizer();
+        this.controller = new Controller(localRepository, synchronizer);
     }
 
     public Controller getController() {

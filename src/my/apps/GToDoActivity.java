@@ -42,7 +42,8 @@ public class GToDoActivity extends Activity {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            CursorResults results = getController().getTaskLists();
+            CursorResults results = getController().getTaskLists(
+                    new String[] { Lists._ID, Lists.NAME }, Lists.NAME + " asc");
             publishProgress(results.getImmediate());
             return results.getDeferred();
         }
