@@ -34,7 +34,8 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
         list2Id = Long.toString(first + 1);
 
         todo = new ServiceDriver(getInstrumentation().getContext());
-        todo.addLists(list3, list4);
+        todo.addList(list3);
+        todo.addList(list4);
 
         database = new DatabaseDriver(getActivity());
         ui = new UIDriver(getActivity());

@@ -24,12 +24,6 @@ public class TaskService {
         this.authTokenProvider = authTokenProvider;
     }
 
-    public void addLists(String... listNames) throws IOException {
-        for(String listName : listNames) {
-            addList(listName);
-        }
-    }
-
     public String addList(String listName) throws IOException {
         try {
             int insertIndex = getLists().length();
