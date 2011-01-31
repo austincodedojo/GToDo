@@ -34,12 +34,12 @@ public class LocalRepository extends SQLiteOpenHelper {
 
     public void insertLists(String[] columns, String[] values) {
         SQLiteDatabase db = getWritableDatabase();
-        for(int v = 0; v < values.length; v++) {
+        for(int v = 0; v < values.length;) {
             ContentValues cvs = new ContentValues();
             for(int c = 0; c < columns.length; c++) {
-                cvs.put(columns[c], values[v]);
+                cvs.put(columns[c], values[v++]);
             }
-            db.insert(TABLE_LISTS, null, cvs);
+            db.insertOrThrow(TABLE_LISTS, null, cvs);
         }
     }
 

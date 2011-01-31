@@ -2,6 +2,8 @@ package my.apps;
 
 import android.database.Cursor;
 
+import java.io.IOException;
+
 public class Controller {
     private LocalRepository localRepository;
     private Synchronizer synchronizer;
@@ -17,7 +19,7 @@ public class Controller {
                 return localRepository.getLists(projection, sortOrder);
             }
 
-            public Cursor getDeferred() {
+            public Cursor getDeferred() throws IOException {
                 synchronizer.synchronizeLists();
                 return localRepository.getLists(projection, sortOrder);
             }

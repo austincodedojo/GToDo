@@ -8,6 +8,8 @@ import org.mockito.MockitoAnnotations;
 
 import android.database.Cursor;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
@@ -42,7 +44,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testDeferredResult() {
+    public void testDeferredResult() throws IOException {
         String[] expectedProjection = {Lists.NAME};
         String expectedSortOrder = Lists.NAME + " asc";
 

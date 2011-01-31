@@ -16,7 +16,9 @@ public class DatabaseDriver {
         db.close();
     }
 
-    public void addList(String listName) {
-        localRepository.insertLists(new String[] { Lists.NAME }, new String[] { listName });
+    public void addList(String listId, String listName) {
+        SQLiteDatabase db = localRepository.getWritableDatabase();
+        localRepository.insertLists(new String[] { Lists.ID, Lists.NAME }, new String[] { listId, listName });
+        db.close();
     }
 }

@@ -14,4 +14,8 @@ public class ServiceDriver {
     public void addList(String listName) throws IOException {
         taskService.addList(listName);
     }
+
+    public void addLists(String... listNames) throws IOException {
+        taskService.addLists(listNames);
+    }
 }

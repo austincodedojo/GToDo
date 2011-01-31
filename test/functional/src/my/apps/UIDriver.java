@@ -40,7 +40,8 @@ public class UIDriver {
     }
 
     public void showsLists(String... expectedLists) throws InterruptedException {
-        List<String> actualLists = observedListNames.poll(2, TimeUnit.SECONDS);
+//        List<String> actualLists = observedListNames.poll(2, TimeUnit.SECONDS);
+        List<String> actualLists = observedListNames.take();
         assertNotNull("Expecting a list", actualLists);
         assertTrue("Expecting that the list contains the expected elements", actualLists.containsAll(Arrays.asList(expectedLists)));
     }

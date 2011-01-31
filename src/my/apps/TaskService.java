@@ -24,6 +24,12 @@ public class TaskService {
         this.authTokenProvider = authTokenProvider;
     }
 
+    public void addLists(String... listNames) throws IOException {
+        for(String listName : listNames) {
+            addList(listName);
+        }
+    }
+
     public String addList(String listName) throws IOException {
         try {
             int insertIndex = getLists().length();
@@ -36,7 +42,7 @@ public class TaskService {
         }
     }
 
-    private JSONArray getLists() throws IOException {
+    public JSONArray getLists() throws IOException {
         JSONArray lists;
         String initialResponse = httpService.get(HttpParameters.with(SERVICE_URL)
               .cookie("GTL", authTokenProvider.getToken()));

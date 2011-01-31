@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class GToDoActivity extends Activity {
     private ListView taskLists;
     private SimpleCursorAdapter taskListsAdapter;
@@ -42,10 +44,15 @@ public class GToDoActivity extends Activity {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            CursorResults results = getController().getTaskLists(
+            try {
+                CursorResults results = getController().getTaskLists(
                     new String[] { Lists._ID, Lists.NAME }, Lists.NAME + " asc");
-            publishProgress(results.getImmediate());
-            return results.getDeferred();
+                publishProgress(results.getImmediate());
+                return results.getDeferred();
+            } catch (IOException ex) {
+                fatalException = ex;
+                return null;
+            }
         }
 
         @Override
