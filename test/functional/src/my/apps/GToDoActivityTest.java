@@ -33,6 +33,10 @@ public class GToDoActivityTest extends ActivityInstrumentationTestCase2<GToDoAct
         list1Id = Long.toString(first);
         list2Id = Long.toString(first + 1);
 
+        // Add lists to the web service here that we will look for in the test,
+        // separated from the test cases. This breaks the narrative flow, but
+        // we must avoid a race condition created by getActivity(), which starts
+        // the application.
         todo = new ServiceDriver(getInstrumentation().getContext());
         todo.addList(list3);
         todo.addList(list4);
