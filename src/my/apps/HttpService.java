@@ -25,6 +25,8 @@ public class HttpService {
     private HttpContext context;
     private BasicCookieStore cookieStore;
 
+    private static final int HTTP_UNAUTHORIZED = 401;
+
     public HttpService() {
         httpClient = new DefaultHttpClient();
         cookieStore = new BasicCookieStore();
@@ -56,6 +58,8 @@ public class HttpService {
     }
 
     private String responseToString(HttpResponse httpResponse) throws IOException {
+        checkAuthorization(httpResponse);
+
         InputStream content = httpResponse.getEntity().getContent();
         StringBuffer response = new StringBuffer();
 
@@ -66,6 +70,12 @@ public class HttpService {
         }
 
         return response.toString();
+    }
+
+    private void checkAuthorization(HttpResponse httpResponse) throws IOException {
+        if(httpResponse.getStatusLine().getStatusCode() == HTTP_UNAUTHORIZED) {
+            throw new HttpUnauthorizedException();
+        }
     }
 
     private void populateMessageFromParameters(HttpMessage httpMessage, HttpParameters parameters) {

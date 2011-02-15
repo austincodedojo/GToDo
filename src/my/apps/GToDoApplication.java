@@ -25,4 +25,8 @@ public class GToDoApplication extends Application {
     public Controller getController() {
         return controller;
     }
+
+    public AuthTokenProvider getAuthTokenProvider() {
+        return authTokenProvider;
+    }
 }

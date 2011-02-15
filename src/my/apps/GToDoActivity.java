@@ -38,21 +38,33 @@ public class GToDoActivity extends Activity {
         return ((GToDoApplication) getApplication()).getController();
     }
 
+    private AuthTokenProvider getAuthTokenProvider() {
+        return ((GToDoApplication) getApplication()).getAuthTokenProvider();
+    }
+
     public class TaskListsTask extends AsyncTask<Void, Cursor, Cursor> {
+        private boolean tryAgain;
         private Intent userInteration;
         private Exception fatalException;
 
         @Override
         protected Cursor doInBackground(Void... voids) {
             try {
+                tryAgain = false;
                 CursorResults results = getController().getTaskLists(
                     new String[] { Lists._ID, Lists.NAME }, Lists.NAME + " asc");
                 publishProgress(results.getImmediate());
                 return results.getDeferred();
+            } catch (UserInteractionRequiredException ex) {
+                userInteration = ex.getUserInteraction();
+                tryAgain = true;
+            } catch (HttpUnauthorizedException ex) {
+                getAuthTokenProvider().invalidateToken();
+                tryAgain = true;
             } catch (IOException ex) {
                 fatalException = ex;
-                return null;
             }
+            return null;
         }
 
         @Override
@@ -62,15 +74,20 @@ public class GToDoActivity extends Activity {
 
         @Override
         protected void onPostExecute(Cursor cursor) {
-            if(userInteration != null) {
+            if(cursor != null) {
+                taskListsAdapter.changeCursor(cursor);
+            }
+            else if(userInteration != null) {
                 GToDoActivity.this.startActivityForResult(userInteration, 0);
-                new TaskListsTask().execute();
             }
             else if(fatalException != null) {
                 Toast.makeText(GToDoActivity.this, fatalException.getMessage(), Toast.LENGTH_SHORT).show();
                 GToDoActivity.this.finish();
             }
-            taskListsAdapter.changeCursor(cursor);
+
+            if(tryAgain) {
+                new TaskListsTask().execute();
+            }
         }
     }
 }
